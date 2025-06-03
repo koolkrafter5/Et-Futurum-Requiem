@@ -22,7 +22,7 @@ public class GuiBarrel extends GuiContainer {
 	private final IInventory upperChestInventory;
 	private final IInventory lowerChestInventory;
 	/**
-	 * window height is calculated with these values; the more rows, the heigher
+	 * window height is calculated with these values; the more rows, the higher
 	 */
 	private final int inventoryRows;
 
