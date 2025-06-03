@@ -51,7 +51,7 @@ public class BlockBarrel extends BlockContainer {
 			case OBSIDIAN:
 			case DARKSTEEL:
 			case NETHERITE:
-				this.setHardness(50F);
+				this.setHardness(10F);
 				this.setResistance(2000F);
 				break;
 			default:
