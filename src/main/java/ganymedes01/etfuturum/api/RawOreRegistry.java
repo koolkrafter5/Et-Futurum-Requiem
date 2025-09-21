@@ -119,7 +119,7 @@ public class RawOreRegistry {
 				for (int i = 0; i < oreItem.ores.length; i++) {
 					String type = oreItem.ores[i];
 					for (int j = 0; j < 1; j++) {
-						if (Utils.listGeneralModdedRawOre(type.replace("ingot", "ore"))) { //If it's mythril, we'll run this once more, changing the spelling to mithril to account for both tags.
+						if (Utils.listGeneralModdedRawOre(type)) { //If it's mythril, we'll run this once more, changing the spelling to mithril to account for both tags.
 							addOre(type.replace("ingot", "ore"), ModItems.MODDED_RAW_ORE.get(), i);
 							if(ModsList.NETHERORES.isLoaded()) {
 								addOre(type.replace("ingot", "oreNether"), ModItems.MODDED_RAW_ORE.get(), i);
