@@ -10,10 +10,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-public class TileEntityBlastFurnace extends TileEntity implements ISidedInventory {
+public class TileEntityBlastFurnace extends TileEntityFurnace implements ISidedInventory {
 	private static final int[] slotsTop = new int[]{0};
 	private static final int[] slotsBottom = new int[]{2, 1};
 	private static final int[] slotsSides = new int[]{1};
@@ -118,7 +117,7 @@ public class TileEntityBlastFurnace extends TileEntity implements ISidedInventor
 		return this.furnaceCustomName != null && this.furnaceCustomName.length() > 0;
 	}
 
-	public void setCustomInventoryName(String p_145951_1_) {
+	public void func_145951_a(String p_145951_1_) {
 		this.furnaceCustomName = p_145951_1_;
 	}
 
