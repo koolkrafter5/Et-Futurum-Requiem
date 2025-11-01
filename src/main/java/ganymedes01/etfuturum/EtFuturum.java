@@ -17,7 +17,6 @@ import ganymedes01.etfuturum.api.*;
 import ganymedes01.etfuturum.client.BuiltInResourcePack;
 import ganymedes01.etfuturum.client.DynamicSoundsResourcePack;
 import ganymedes01.etfuturum.client.GrayscaleWaterResourcePack;
-import ganymedes01.etfuturum.client.sound.BlockSoundRegisterHelper;
 import ganymedes01.etfuturum.client.sound.ModSounds;
 import ganymedes01.etfuturum.command.CommandFill;
 import ganymedes01.etfuturum.compat.*;
@@ -412,8 +411,6 @@ public class EtFuturum {
 			Blocks.bed.blockMaterial = Material.wood;
 			Blocks.bed.setStepSound(Block.soundTypeWood);
 		}
-
-		BlockSoundRegisterHelper.setupMultiBlockSoundRegistry();
 
 		CompatMisc.runModHooksLoadComplete();
 
