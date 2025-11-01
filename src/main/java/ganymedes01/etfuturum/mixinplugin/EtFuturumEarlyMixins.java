@@ -5,10 +5,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import ganymedes01.etfuturum.Tags;
 import ganymedes01.etfuturum.compat.CompatMisc;
 import ganymedes01.etfuturum.configuration.ConfigBase;
-import ganymedes01.etfuturum.configuration.configs.ConfigEnchantsPotions;
-import ganymedes01.etfuturum.configuration.configs.ConfigEntities;
-import ganymedes01.etfuturum.configuration.configs.ConfigMixins;
-import ganymedes01.etfuturum.configuration.configs.ConfigTweaks;
+import ganymedes01.etfuturum.configuration.configs.*;
 import ganymedes01.etfuturum.lib.Reference;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.launchwrapper.Launch;
@@ -23,11 +20,6 @@ import java.util.Set;
 @IFMLLoadingPlugin.Name("EtFuturumEarlyMixins")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoader {
-
-	static
-	{
-
-	}
 
 	public static final MixinEnvironment.Side side = MixinEnvironment.getCurrentEnvironment().getSide();
 
@@ -262,6 +254,10 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 
 			if (ConfigMixins.colorGrassBlockItemSides) {
 				mixins.add("coloredgrassitem.client.MixinRenderBlocks");
+			}
+
+			if(ConfigSounds.newBlockSounds) {
+				mixins.add("sounds.client.MixinBlockStepSounds");
 			}
 		}
 

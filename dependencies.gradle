@@ -38,7 +38,7 @@ dependencies {
     compileOnly "com.falsepattern:rple-mc1.7.10:1.1.0"
 
     //My core mod
-    api files("libs/hogutils-0.0.0-nightly-83803d8185-dirty-dev.jar")
+    api files("libs/hogutils-0.0.0-nightly-984c08e28a-dev.jar")
 
 
     implementation("com.github.GTNewHorizons:GTNHLib:0.6.36")
@@ -65,6 +65,10 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.12.6-GTNH:dev") {
         transitive = false
     }
+    compileOnly("com.github.GTNewHorizons:Mantle:0.5.1:dev") {
+        transitive = false
+    }
+
 
     compileOnly("com.github.GTNewHorizons:Angelica:1.0.0-beta4:api") {
         transitive = false
