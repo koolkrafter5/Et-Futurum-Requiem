@@ -12,6 +12,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import roadhog360.hogutils.api.utils.RecipeHelper;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,7 +98,7 @@ public class RawOreRegistry {
 	 * in case the key changes.
 	 */
 	public static Map<String, RawOreDropMapping> getOreMap() {
-		return rawOreRegistry;
+		return Collections.unmodifiableMap(rawOreRegistry);
 	}
 
 	public static void init() {

@@ -97,6 +97,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import roadhog360.hogutils.api.blocksanditems.utils.BlockMetaPair;
 import roadhog360.hogutils.api.hogtags.helpers.BlockTags;
+import roadhog360.hogutils.api.hogtags.helpers.ItemTags;
 import roadhog360.hogutils.api.utils.RecipeHelper;
 
 import java.io.BufferedReader;
@@ -471,7 +472,7 @@ public class ServerEventHandler {
 				ItemStack stack = event.drops.get(i);
 				for (String oreName : EtFuturum.getOreStrings(stack)) {
 					//For some reason this list is always empty for items which were added during the event being fired
-					RawOreDropMapping mapping = RawOreRegistry.getOreMap().get(oreName);
+					RawOreDropMapping mapping = RawOreRegistry.getOre(oreName);
 					if (mapping != null && stack != null && !EtFuturum.dictTagsStartWith(stack, "raw")) {
 						event.drops.set(i, new ItemStack(mapping.get(), mapping.getDropAmount(event.world.rand, event.fortuneLevel), mapping.getMeta()));
 						break;
@@ -956,37 +957,23 @@ public class ServerEventHandler {
 
 						//Grass pathing/Log Stripping
 						//This is nested into the same function since they use similar checks
-						if (heldStack != null) {
-
-							//Check if tool is a broken TiC tool
-							boolean toolIsBroken = false;
-							if (heldStack.hasTagCompound() && heldStack.getTagCompound().hasKey("InfiTool")) {
-								toolIsBroken = heldStack.getTagCompound().getCompoundTag("InfiTool").getBoolean("Broken");
-							}
-
-							if (!toolIsBroken) {
-								Set<String> toolClasses = heldStack.getItem().getToolClasses(heldStack);
-								if (toolClasses != null
-										//TODO dirty solution, make this a list, maybe a HogUtils tag `#etfuturum:no_till_shovels`?
-										&& heldStack.getItem() != ExternalContent.Items.BOTANIA_MANASTEEL_SHOVEL.get()
-										&& heldStack.getItem() != ExternalContent.Items.THAUMCRAFT_EARTHMOVER_SHOVEL.get()) {
-									if (ConfigBlocksItems.enableGrassPath && toolClasses.contains("shovel") && !world.getBlock(x, y + 1, z).getMaterial().isSolid() && (oldBlock == Blocks.grass || oldBlock == Blocks.dirt || oldBlock == Blocks.mycelium)) {
-										player.swingItem();
-										if (!world.isRemote) {
-											world.setBlock(x, y, z, ModBlocks.GRASS_PATH.get());
-											heldStack.damageItem(1, player);
-											world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, Reference.MCAssetVer + ":item.shovel.flatten", 1.0F, 1.0F);
-										}
-									} else if (ConfigBlocksItems.enableStrippedLogs && toolClasses.contains("axe")) {
-										BlockMetaPair newBlock = StrippedLogRegistry.getLog(oldBlock, world.getBlockMetadata(x, y, z) % 4);
-										if (newBlock != null) {
-											player.swingItem();
-											if (!world.isRemote) {
-												world.setBlock(x, y, z, newBlock.getObject(), newBlock.getMeta() + ((meta / 4) * 4), 2);
-												heldStack.damageItem(1, player);
-												world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, Reference.MCAssetVer + ":item.axe.strip", 1.0F, 0.8F);
-											}
-										}
+						if (heldStack != null && !isCustomBroken(heldStack)) {
+							if (ModBlocks.GRASS_PATH.isEnabled() && ItemTags.hasTag(heldStack.getItem(), Tags.MOD_ID + ":dirt_path_tools")
+									&& !world.getBlock(x, y + 1, z).getMaterial().isSolid() && BlockTags.hasTag(oldBlock, Tags.MOD_ID + ":pathables")) {
+								player.swingItem();
+								if (!world.isRemote) {
+									world.setBlock(x, y, z, ModBlocks.GRASS_PATH.get());
+									heldStack.damageItem(1, player);
+									world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, Tags.MC_ASSET_VER + ":item.shovel.flatten", 1.0F, 1.0F);
+								}
+							} else if (ConfigBlocksItems.enableStrippedLogs && ItemTags.hasTag(heldStack.getItem(), Tags.MOD_ID + ":stripped_log_tools")) {
+								BlockMetaPair newBlock = StrippedLogRegistry.getLog(oldBlock, meta);
+								if (newBlock != null) {
+									player.swingItem();
+									if (!world.isRemote) {
+										world.setBlock(x, y, z, newBlock.get(), newBlock.getMeta(), 2);
+										heldStack.damageItem(1, player);
+										world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, StrippedLogRegistry.getSound(oldBlock, meta), 1.0F, 1.0F);
 									}
 								}
 							}
@@ -995,6 +982,15 @@ public class ServerEventHandler {
 				}
 			}
 		}
+	}
+
+	/// If this item is broken in a custom way
+	private boolean isCustomBroken(ItemStack stack) {
+		//Check if tool is a broken TiC tool
+		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("InfiTool")) {
+			return stack.getTagCompound().getCompoundTag("InfiTool").getBoolean("Broken");
+		}
+		return false;
 	}
 
 	private boolean doMudConversion(World world, int x, int y, int z, EntityPlayer player, Block oldBlock, int meta, ItemStack heldStack) {
