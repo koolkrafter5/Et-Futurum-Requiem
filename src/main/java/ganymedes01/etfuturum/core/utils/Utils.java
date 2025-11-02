@@ -1,6 +1,7 @@
 package ganymedes01.etfuturum.core.utils;
 
 import cpw.mods.fml.common.Loader;
+import ganymedes01.etfuturum.Tags;
 import ganymedes01.etfuturum.client.sound.ModSounds;
 import ganymedes01.etfuturum.compat.ModsList;
 import ganymedes01.etfuturum.configuration.configs.ConfigBlocksItems;
@@ -43,7 +44,7 @@ public class Utils {
 	public static final float SQRT_2 = MathHelper.sqrt_float(2.0F);
 
 	public static String getUnlocalisedName(String name) {
-		return Reference.MOD_ID + "." + name;
+		return Tags.MOD_ID + "." + name;
 	}
 
 	public static String getBlockTexture(String name) {
@@ -59,7 +60,7 @@ public class Utils {
 	}
 
 	public static String getConainerName(String name) {
-		return "container." + Reference.MOD_ID + "." + name;
+		return "container." + Tags.MOD_ID + "." + name;
 	}
 
 	public static String getModContainer() {
@@ -176,9 +177,9 @@ public class Utils {
 		double d1 = p_188803_0_.motionY;
 		double d2 = p_188803_0_.motionZ;
 		float f = MathHelper.sqrt_double(d0 * d0 + d2 * d2);
-		p_188803_0_.rotationYaw = (float) (atan2(d2, d0) * (180D / Math.PI)) + 90.0F;
+		p_188803_0_.rotationYaw = (float) (Math.atan2(d2, d0) * (180D / Math.PI)) + 90.0F;
 
-		for (p_188803_0_.rotationPitch = (float) (atan2(f, d1) * (180D / Math.PI))
+		for (p_188803_0_.rotationPitch = (float) (Math.atan2(f, d1) * (180D / Math.PI))
 				- 90.0F; p_188803_0_.rotationPitch
 					 - p_188803_0_.prevRotationPitch < -180.0F; p_188803_0_.prevRotationPitch -= 360.0F) {
 		}
@@ -199,75 +200,6 @@ public class Utils {
 				+ (p_188803_0_.rotationPitch - p_188803_0_.prevRotationPitch) * p_188803_1_;
 		p_188803_0_.rotationYaw = p_188803_0_.prevRotationYaw
 				+ (p_188803_0_.rotationYaw - p_188803_0_.prevRotationYaw) * p_188803_1_;
-	}
-
-	// Copied from 1.9 MathHelper
-	public static double atan2(double p_181159_0_, double p_181159_2_) {
-
-		final double FRAC_BIAS = Double.longBitsToDouble(4805340802404319232L);
-		final double[] ASINE_TAB;
-		final double[] COS_TAB;
-		ASINE_TAB = new double[257];
-		COS_TAB = new double[257];
-
-		for (int j = 0; j < 257; ++j) {
-			double d0 = (double) j / 256.0D;
-			double d1 = Math.asin(d0);
-			COS_TAB[j] = Math.cos(d1);
-			ASINE_TAB[j] = d1;
-		}
-
-		double d0 = p_181159_2_ * p_181159_2_ + p_181159_0_ * p_181159_0_;
-
-		if (Double.isNaN(d0)) {
-			return Double.NaN;
-		}
-
-		boolean flag = p_181159_0_ < 0.0D;
-
-		if (flag) {
-			p_181159_0_ = -p_181159_0_;
-		}
-
-		boolean flag1 = p_181159_2_ < 0.0D;
-
-		if (flag1) {
-			p_181159_2_ = -p_181159_2_;
-		}
-
-		boolean flag2 = p_181159_0_ > p_181159_2_;
-
-		if (flag2) {
-			double d1 = p_181159_2_;
-			p_181159_2_ = p_181159_0_;
-			p_181159_0_ = d1;
-		}
-
-		double d9 = invSqrt(d0);
-		p_181159_2_ = p_181159_2_ * d9;
-		p_181159_0_ = p_181159_0_ * d9;
-		double d2 = FRAC_BIAS + p_181159_0_;
-		int i = (int) Double.doubleToRawLongBits(d2);
-		double d3 = ASINE_TAB[i];
-		double d4 = COS_TAB[i];
-		double d5 = d2 - FRAC_BIAS;
-		double d6 = p_181159_0_ * d4 - p_181159_2_ * d5;
-		double d7 = (6.0D + d6 * d6) * d6 * 0.16666666666666666D;
-		double d8 = d3 + d7;
-
-		if (flag2) {
-			d8 = (Math.PI / 2D) - d8;
-		}
-
-		if (flag1) {
-			d8 = Math.PI - d8;
-		}
-
-		if (flag) {
-			d8 = -d8;
-		}
-
-		return d8;
 	}
 
 	public static float invSqrt(float num) {
@@ -450,41 +382,6 @@ public class Utils {
 			list = ArrayUtils.removeElements(list, BiomeDictionary.getBiomesForType(typeToBlacklist));
 		}
 		return list;
-	}
-
-	private static Integer maxMeta;
-	private static Integer minMeta;
-
-	public static int getMaxMetadata() {
-		if (maxMeta == null) {
-			if (ModsList.NOT_ENOUGH_IDS.isLoaded() && ModsList.NOT_ENOUGH_IDS.isVersionNewerOrEqual("2.0.0")) {
-				maxMeta = (int) Short.MAX_VALUE;
-			} else if (ModsList.ENDLESS_IDS_BLOCKITEM.isLoaded()) {
-				maxMeta = 65536;
-			} else {
-				maxMeta = 15;
-			}
-		}
-		return maxMeta;
-	}
-
-	public static int getMinMetadata() {
-		if (minMeta == null) {
-			if (ModsList.NOT_ENOUGH_IDS.isLoaded() && ModsList.NOT_ENOUGH_IDS.isVersionNewerOrEqual("2.0.0")) {
-				minMeta = (int) Short.MIN_VALUE;
-			} else { //EIDs has min meta 0 too, so we don't need to check for it
-				minMeta = 0;
-			}
-		}
-		return minMeta;
-	}
-
-	public static boolean isMetaInBlockBounds(int meta) {
-		return meta <= getMaxMetadata() && meta >= getMinMetadata();
-	}
-
-	public static boolean isMetaInBlockBoundsIgnoreWildcard(int meta) {
-		return meta == OreDictionary.WILDCARD_VALUE || isMetaInBlockBounds(meta);
 	}
 
 	public static void copyAttribs(Block to, Block from) {
