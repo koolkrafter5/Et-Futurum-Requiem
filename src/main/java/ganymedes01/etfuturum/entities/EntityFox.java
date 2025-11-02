@@ -14,7 +14,7 @@ import ganymedes01.etfuturum.entities.ai.EntityAICustomNearestAttackableTarget;
 import ganymedes01.etfuturum.entities.ai.EntityAIFleeSunExtended;
 import ganymedes01.etfuturum.entities.ai.ExtendedEntityLookHelper;
 import ganymedes01.etfuturum.entities.ai.TargetPredicate;
-import ganymedes01.etfuturum.lib.Reference;
+import ganymedes01.etfuturum.Tags;
 import ganymedes01.etfuturum.spectator.SpectatorMode;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
@@ -216,7 +216,7 @@ public class EntityFox extends EntityAnimal {
         }
 
         if (this.isAggressive() && this.rand.nextFloat() < 0.05F) {
-            this.playSound(Reference.MCAssetVer + ":entity.fox.aggro", 1.0F, 1.0F);
+            this.playSound(Tags.MC_ASSET_VER + ":entity.fox.aggro", 1.0F, 1.0F);
         }
     }
 
@@ -519,7 +519,7 @@ public class EntityFox extends EntityAnimal {
                     stack);
             EntityItem.delayBeforeCanPickup = 40;
             EntityItem.func_145799_b(getUniqueID().toString()); // is this OK?
-            this.playSound(Reference.MCAssetVer + ":entity.fox.spit", 1.0F, 1.0F);
+            this.playSound(Tags.MC_ASSET_VER + ":entity.fox.spit", 1.0F, 1.0F);
             this.worldObj.spawnEntityInWorld(EntityItem);
         }
     }
@@ -695,7 +695,7 @@ public class EntityFox extends EntityAnimal {
     @Override
     public void playLivingSound() {
         String soundEvent = this.getLivingSound();
-        if (soundEvent.equals(Reference.MCAssetVer + ":entity.fox.screech")) {
+        if (soundEvent.equals(Tags.MC_ASSET_VER + ":entity.fox.screech")) {
             this.playSound(soundEvent, 2.0F, this.getSoundPitch());
         } else {
             super.playLivingSound();
@@ -705,32 +705,32 @@ public class EntityFox extends EntityAnimal {
     @Override
     protected String getLivingSound() {
         if (this.isPlayerSleeping()) {
-            return Reference.MCAssetVer + ":entity.fox.sleep";
+            return Tags.MC_ASSET_VER + ":entity.fox.sleep";
         } else {
             if (!this.worldObj.isDaytime() && this.rand.nextFloat() < 0.1F) {
                 List<EntityPlayer> list = this.worldObj.getEntitiesWithinAABB(
                         EntityPlayer.class,
                         this.boundingBox.expand(16.0D, 16.0D, 16.0D));
                 if (list.isEmpty()) {
-                    return Reference.MCAssetVer + ":entity.fox.screech";
+                    return Tags.MC_ASSET_VER + ":entity.fox.screech";
                 }
             }
-            return Reference.MCAssetVer + ":entity.fox.ambient";
+            return Tags.MC_ASSET_VER + ":entity.fox.ambient";
         }
     }
 
     @Override
     protected String getHurtSound() {
-        return Reference.MCAssetVer + ":entity.fox.hurt";
+        return Tags.MC_ASSET_VER + ":entity.fox.hurt";
     }
 
     @Override
     protected String getDeathSound() {
-        return Reference.MCAssetVer + ":entity.fox.death";
+        return Tags.MC_ASSET_VER + ":entity.fox.death";
     }
 
     protected String getEatSound() {
-        return Reference.MCAssetVer + ":entity.fox.eat";
+        return Tags.MC_ASSET_VER + ":entity.fox.eat";
     }
 
     private boolean canTrust(UUID uuid) {
@@ -801,7 +801,7 @@ public class EntityFox extends EntityAnimal {
 
             this.dealDamage(this, target);
             this.onAttacking(target);
-            this.playSound(Reference.MCAssetVer + ":entity.fox.bite", 1.0F, 1.0F);
+            this.playSound(Tags.MC_ASSET_VER + ":entity.fox.bite", 1.0F, 1.0F);
         }
 
         return result;
@@ -1290,7 +1290,7 @@ public class EntityFox extends EntityAnimal {
                     ++this.timer;
                 }
             } else if (!this.hasReached() && EntityFox.this.rand.nextFloat() < 0.05F) {
-                EntityFox.this.playSound(Reference.MCAssetVer + ":entity.fox.sniff", 1.0F, 1.0F);
+                EntityFox.this.playSound(Tags.MC_ASSET_VER + ":entity.fox.sniff", 1.0F, 1.0F);
             }
 
             BlockPos blockPos = this.getTargetPos();
@@ -1387,7 +1387,7 @@ public class EntityFox extends EntityAnimal {
                         EntityFox.this.worldObj.spawnEntityInWorld(entityitem);
                     }
 
-                    EntityFox.this.playSound(Reference.MCAssetVer + ":block.sweet_berry_bush.pick_berries", 1.0F, 1.0F);
+                    EntityFox.this.playSound(Tags.MC_ASSET_VER + ":block.sweet_berry_bush.pick_berries", 1.0F, 1.0F);
                     EntityFox.this.worldObj.setBlockMetadataWithNotify(x, y, z, 1, 2);
                 }
             }
@@ -1688,7 +1688,7 @@ public class EntityFox extends EntityAnimal {
                 this.lastAttackedTime = EntityFox.this.friend.getLastAttackerTime();
             }
 
-            EntityFox.this.playSound(Reference.MCAssetVer + ":entity.fox.aggro", 1.0F, 1.0F);
+            EntityFox.this.playSound(Tags.MC_ASSET_VER + ":entity.fox.aggro", 1.0F, 1.0F);
             EntityFox.this.setAggressive(true);
             EntityFox.this.stopSleeping();
             super.startExecuting();
