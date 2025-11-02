@@ -5,17 +5,14 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import ganymedes01.etfuturum.Tags;
 import ganymedes01.etfuturum.compat.CompatMisc;
 import ganymedes01.etfuturum.configuration.ConfigBase;
-import ganymedes01.etfuturum.configuration.configs.ConfigEnchantsPotions;
-import ganymedes01.etfuturum.configuration.configs.ConfigEntities;
-import ganymedes01.etfuturum.configuration.configs.ConfigMixins;
-import ganymedes01.etfuturum.configuration.configs.ConfigTweaks;
+import ganymedes01.etfuturum.configuration.configs.*;
 import ganymedes01.etfuturum.lib.Reference;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +24,7 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 	public static final MixinEnvironment.Side side = MixinEnvironment.getCurrentEnvironment().getSide();
 
 	public void initConfigs() {
-		final String configDir = "config" + File.separator + Reference.MOD_ID;
+		final String configDir = "config" + File.separator + Tags.MOD_ID;
 
 //	  File from before Et Futurum Requiem (Not in a subdirectory)
 		File olderFile = new File(Launch.minecraftHome, "config" + File.separator + "etfuturum.cfg");
@@ -68,7 +65,7 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 
 		initConfigs();
 
-		List<String> mixins = new ArrayList<>();
+		List<String> mixins = new ObjectArrayList<>();
 
 		if (ConfigMixins.endPortalFix) {
 			mixins.add("endportal.MixinBlockEndPortal");
@@ -93,6 +90,7 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 			mixins.add("spectator.MixinInventoryPlayer");
 			mixins.add("spectator.MixinContainerChest");
 			mixins.add("spectator.MixinSlot");
+			mixins.add("spectator.MixinCommandGameMode");
 			if (side == MixinEnvironment.Side.CLIENT) {
 				mixins.add("spectator.client.MixinEntityRenderer");
 				mixins.add("spectator.client.MixinEntityPlayer");
@@ -109,9 +107,6 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 			mixins.add("backlytra.MixinEntityLivingBase");
 			mixins.add("backlytra.MixinNetHandlerPlayServer");
 			mixins.add("backlytra.MixinEntityTrackerEntry");
-			if (loadedCoreMods.stream().anyMatch(name -> name.contains("thaumcraft"))) {
-				mixins.add("backlytra.thaumcraft.MixinEventHandlerEntity");
-			}
 			if (side == MixinEnvironment.Side.CLIENT) {
 				mixins.add("backlytra.client.MixinAbstractClientPlayer");
 				mixins.add("backlytra.client.MixinEntityPlayerSP");
@@ -128,6 +123,7 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 
 		if (ConfigMixins.enableRandomTickSpeed) {
 			mixins.add("randomtickspeed.MixinWorldServer");
+			mixins.add("randomtickspeed.MixinGameRules");
 		}
 
 		if (ConfigMixins.creativeFlightSpeedModifier > 1 || ConfigTweaks.creativeFlightVerticalModifier > 1) {
@@ -259,6 +255,10 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 			if (ConfigMixins.colorGrassBlockItemSides) {
 				mixins.add("coloredgrassitem.client.MixinRenderBlocks");
 			}
+
+			if(ConfigSounds.newBlockSounds) {
+				mixins.add("sounds.client.MixinBlockStepSounds");
+			}
 		}
 
 		if (ConfigMixins.thinPanes) {
@@ -271,6 +271,12 @@ public class EtFuturumEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoade
 		if (ConfigMixins.enablePlayersSleepingPecentageGamerule) {
 			mixins.add("playerssleepingpercentage.MixinWorldServer");
 		}
+
+		if (ConfigEntities.enableFoxes) {
+			mixins.add("foxes.MixinEntityLivingBase");
+			mixins.add("foxes.MixinEntityWolf");
+		}
+		mixins.add("deepslateores.MixinChunk");
 
 		return mixins;
 	}

@@ -108,7 +108,7 @@ public class CommonProxy implements IGuiHandler {
 		if (ConfigEntities.enableRabbit) {
 			ModEntityList.registerEntity(EntityRabbit.class, "rabbit", 3, EtFuturum.instance, 80, 3, true, 0x995F40, 0x734831);
 
-			EntityRegistry.addSpawn(EntityRabbit.class, 5, 3, 3, EnumCreatureType.creature, BiomeDictionary.getBiomesForType(Type.SANDY));
+			EntityRegistry.addSpawn(EntityRabbit.class, 3, 1, 3, EnumCreatureType.creature, BiomeDictionary.getBiomesForType(Type.SANDY));
 			BiomeGenBase[] array = BiomeDictionary.getBiomesForType(Type.SNOWY);
 			array = ArrayUtils.addAll(array, BiomeDictionary.getBiomesForType(Type.PLAINS));
 			array = ArrayUtils.addAll(array, BiomeDictionary.getBiomesForType(Type.FOREST));
@@ -117,7 +117,7 @@ public class CommonProxy implements IGuiHandler {
 					ArrayUtils.removeElement(array, biome);
 				}
 			}
-			EntityRegistry.addSpawn(EntityRabbit.class, 10, 3, 3, EnumCreatureType.creature, array);
+			EntityRegistry.addSpawn(EntityRabbit.class, 6, 1, 3, EnumCreatureType.creature, array);
 		}
 
 		if (ConfigBlocksItems.enableArmourStand) {
@@ -225,6 +225,11 @@ public class CommonProxy implements IGuiHandler {
 
 		if (ConfigEntities.enableBees) {
 			ModEntityList.registerEntity(EntityBee.class, "bee", 21, EtFuturum.instance, 80, 1, true, 0xEDC343, 0x43241B);
+		}
+
+		if (ConfigEntities.enableFoxes) {
+			ModEntityList.registerEntity(EntityFox.class, "fox", 22, EtFuturum.instance, 64, 1, true, 0xD5B69F, 0xCC6920);
+			EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, BiomeDictionary.getBiomesForType(Type.CONIFEROUS));
 		}
 
 		//make magmas slightly more common, hopefully.
