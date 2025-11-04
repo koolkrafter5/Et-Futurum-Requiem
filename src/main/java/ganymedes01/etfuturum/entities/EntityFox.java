@@ -3,40 +3,19 @@ package ganymedes01.etfuturum.entities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ganymedes01.etfuturum.ModItems;
+import ganymedes01.etfuturum.Tags;
 import ganymedes01.etfuturum.blocks.BlockBerryBush;
 import ganymedes01.etfuturum.configuration.configs.ConfigBlocksItems;
-import ganymedes01.etfuturum.configuration.configs.ConfigEntities;
 import ganymedes01.etfuturum.core.handlers.ServerEventHandler;
 import ganymedes01.etfuturum.core.utils.helpers.BlockPos;
-import ganymedes01.etfuturum.core.utils.helpers.WeightedRandomItem;
-import ganymedes01.etfuturum.entities.ai.EntityAICustomAvoidEntity;
-import ganymedes01.etfuturum.entities.ai.EntityAICustomNearestAttackableTarget;
-import ganymedes01.etfuturum.entities.ai.EntityAIFleeSunExtended;
-import ganymedes01.etfuturum.entities.ai.ExtendedEntityLookHelper;
-import ganymedes01.etfuturum.entities.ai.TargetPredicate;
-import ganymedes01.etfuturum.Tags;
+import ganymedes01.etfuturum.entities.ai.*;
 import ganymedes01.etfuturum.spectator.SpectatorMode;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFollowParent;
-import net.minecraft.entity.ai.EntityAILeapAtTarget;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIPanic;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
@@ -58,12 +37,13 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import roadhog360.hogutils.api.blocksanditems.utils.ItemMetaPair;
+import roadhog360.hogutils.api.utils.WeighedRandomList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -230,41 +210,40 @@ public class EntityFox extends EntityAnimal {
 
     protected void initEquipment() {
         if (this.rand.nextFloat() < 0.2F) {
-            List<WeightedRandomItem<Item>> items = getSpawnItems();
-            if (!items.isEmpty()) {
-                WeightedRandomItem<Item> choice = (WeightedRandomItem<Item>) WeightedRandom.getRandomItem(getRNG(), items);
-                this.setCurrentItemOrArmor(0, new ItemStack(choice.data));
+			WeighedRandomList<ItemMetaPair> items = getSpawnItems();
+			ItemMetaPair choice = items.get(getRNG());
+            if (choice != null) {
+                this.setCurrentItemOrArmor(0, choice.newItemStack());
             }
         }
     }
 
-    private static List<WeightedRandomItem<Item>> spawnItems;
+	//TODO: make this an API, possibly with crafttweaker support
 
-    private static List<WeightedRandomItem<Item>> getSpawnItems() {
-        if (spawnItems == null) {
-            // Chances:
-            // 5% emerald
-            // 10% rabbits foot (if rabbits enabled)
-            // 10% rabbit hide (if rabbits enabled)
-            // 15% egg (20% if rabbits disabled)
-            // 20% wheat (25% if rabbits disabled)
-            // 20% leather (25% if rabbits disabled)
-            // 20% feather (25% if rabbits disabled)
-            spawnItems = new ArrayList<>();
+    private final WeighedRandomList<ItemMetaPair> spawnItems = new WeighedRandomList<>();
 
-            int extra = 5;
-            if (ConfigEntities.enableRabbit) {
-                extra = 0;
-                spawnItems.add(new WeightedRandomItem<>(10, ModItems.RABBIT_FOOT.get()));
-                spawnItems.add(new WeightedRandomItem<>(10, ModItems.RABBIT_HIDE.get()));
-            }
+    private WeighedRandomList<ItemMetaPair> getSpawnItems() {
+		// Chances:
+		// 5% emerald
+		// 10% rabbits foot (if rabbits enabled)
+		// 10% rabbit hide (if rabbits enabled)
+		// 15% egg
+		// 20% wheat
+		// 20% leather
+		// 20% feather
 
-            spawnItems.add(new WeightedRandomItem<>(5, Items.emerald));
-            spawnItems.add(new WeightedRandomItem<>(15 + extra, Items.egg));
-            spawnItems.add(new WeightedRandomItem<>(20 + extra, Items.wheat));
-            spawnItems.add(new WeightedRandomItem<>(20 + extra, Items.leather));
-            spawnItems.add(new WeightedRandomItem<>(20 + extra, Items.feather));
-        }
+		if (ModItems.RABBIT_FOOT.isEnabled()) {
+			spawnItems.put(new ItemMetaPair(ModItems.RABBIT_FOOT.get(), 0), 10);
+		}
+		if (ModItems.RABBIT_HIDE.isEnabled()) {
+			spawnItems.put(new ItemMetaPair(ModItems.RABBIT_HIDE.get(), 0), 10);
+		}
+
+		spawnItems.put(new ItemMetaPair(Items.emerald, 0), 5);
+		spawnItems.put(new ItemMetaPair(Items.egg, 0), 15);
+		spawnItems.put(new ItemMetaPair(Items.wheat, 0), 20);
+		spawnItems.put(new ItemMetaPair(Items.leather, 0), 20);
+		spawnItems.put(new ItemMetaPair(Items.feather, 0), 20);
         return spawnItems;
     }
 
@@ -348,7 +327,7 @@ public class EntityFox extends EntityAnimal {
             this.addTypeSpecificTasks();
         }
 
-        this.initEquipment();
+		this.initEquipment();
 
         EntityFox.FoxData foxData = (EntityFox.FoxData) entityData;
         if (foxData.canSpawnBaby() && foxData.getSpawnedCount() > 0 && rand.nextFloat() <= foxData.getBabyChance()) {
